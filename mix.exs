@@ -23,8 +23,7 @@ defmodule TodoCache.MixProject do
   defp deps do
     [
       {:poolboy, "~> 1.5"},
-      {:cowboy, "~> 2.0"},
-      {:plug, "~> 1.11"}
+      {:plug_cowboy, "~> 2.0"}
     ]
   end
 end
