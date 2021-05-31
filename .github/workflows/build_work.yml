@@ -1,0 +1,20 @@
+name: ToDo List Management Pipeline
+
+on: [push]
+
+jobs:
+  todo_testing:
+    name: ToDo Testing Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup BEAM
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '24.0'
+          elixir-version: '1.12.1'
+      - name: Fetch dependencies
+        run: mix deps.get
+      - name: Run unit tests
+        run: mix test
