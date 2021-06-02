@@ -8,6 +8,13 @@ defmodule Todo.Server do
     GenServer.start_link(__MODULE__, name, name: global_name(name))
   end
 
+  def whereis(name) do
+    case :global.whereis_name({__MODULE__, name}) do
+      :undefined -> nil
+      pid -> pid
+    end
+  end
+
   def entries(pid, date) do
     GenServer.call(pid, {:entries, date}) # sync
   end
