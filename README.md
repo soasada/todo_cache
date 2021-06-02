@@ -2,7 +2,7 @@
 
 ToDo lists management application in Elixir.
 
-### Process registration
+### Process Registration
 
 These are the different types of process registration in Elixir/Erlang:
 
