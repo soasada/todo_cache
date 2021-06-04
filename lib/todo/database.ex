@@ -1,13 +1,25 @@
 defmodule Todo.Database do
   @db_folder "./persist"
 
-  def store(key, data) do
+  def store_local(key, data) do
     :poolboy.transaction(
       __MODULE__,
       fn worker_pid ->
         Todo.DatabaseWorker.store(worker_pid, key, data)
       end
     )
+  end
+
+  def store(key, data) do
+    {_results, bad_nodes} = :rpc.multicall(
+      __MODULE__,
+      :store_local,
+      [key, data],
+      :timer.seconds(5) # very important, without this timeout the store operation would be blocked forever
+    )
+
+    Enum.each(bad_nodes, &IO.puts("Store failer on node #{&1}"))
+    :ok
   end
 
   def get(key) do
@@ -43,7 +55,7 @@ defmodule Todo.DatabaseWorker do
   end
 
   def store(worker_id, key, data) do
-    GenServer.cast(worker_id, {:store, key, data})
+    GenServer.call(worker_id, {:store, key, data})
   end
 
   def get(worker_id, key) do
@@ -52,7 +64,7 @@ defmodule Todo.DatabaseWorker do
 
   @impl true
   def init(folder) do
-    File.mkdir_p!(folder)
+    File.mkdir_p!(folder <> "/" <> to_string(node()))
     {:ok, folder}
   end
 

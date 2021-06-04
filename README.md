@@ -11,6 +11,10 @@ These are the different types of process registration in Elixir/Erlang:
 3. `:global` allows you to register a cluster-wide alias.
 4. `:pg` is useful for registering multiple processes behind a cluster-wide alias (process group), which is usually suitable for distributed pub-sub scenarios.
 
+### :rpc module
+
+Allows you to issue a function call on all nodes in the cluster, this module could be use to replicate data in the entire cluster.
+
 ### How to fetch all dependencies
 
 `mix deps.get`
