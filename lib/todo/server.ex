@@ -16,11 +16,11 @@ defmodule Todo.Server do
   end
 
   def entries(pid, date) do
-    GenServer.call(pid, {:entries, date}) # sync
+    GenServer.call(pid, {:entries, date})
   end
 
   def add(pid, date, title) do
-    GenServer.cast(pid, {:add, date, title}) # async
+    GenServer.call(pid, {:add, date, title})
   end
 
   @impl true
@@ -30,10 +30,10 @@ defmodule Todo.Server do
   end
 
   @impl true
-  def handle_cast({:add, date, title}, {name, todo_list}) do
+  def handle_call({:add, date, title}, _, {name, todo_list}) do
     new_list = Todo.List.add_entry(todo_list, date, title)
     Todo.Database.store(name, new_list)
-    {:noreply, {name, new_list}, @expiry_idle_timeout}
+    {:reply, :ok, {name, new_list}, @expiry_idle_timeout}
   end
 
   @impl true
